@@ -1,9 +1,6 @@
-"""Main entry point for Bot & Web Server health checks."""
+"""Main entry point for Telegram Bot (Background Worker Edition)."""
 
 import logging
-import asyncio
-import threading
-from flask import Flask
 from telegram.ext import (
     Application,
     CommandHandler,
@@ -27,33 +24,14 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# Lightweight Web Server for Render Health Check
-app = Flask(__name__)
-
-
-@app.route("/")
-def health_check():
-    """Health check endpoint required for web service deployment."""
-    return "Bot is running online!", 200
-
-
-def run_flask():
-    """Run Flask application inside a separate thread."""
-    app.run(host="0.0.0.0", port=config.PORT)
-
 
 def main() -> None:
     """Initialize database and start the Telegram Bot application."""
     # 1. Initialize SQLite Database
     database.init_db()
 
-    # 2. Spin up health check endpoint thread for Render
-    threading.Thread(target=run_flask, daemon=True).start()
-
-    # 3. Create Telegram Bot Application
-    application = (
-        Application.builder().token(config.BOT_TOKEN).build()
-    )
+    # 2. Create Telegram Bot Application
+    application = Application.builder().token(config.BOT_TOKEN).build()
 
     # Command Handlers
     application.add_handler(CommandHandler("start", start_handler))
@@ -86,7 +64,7 @@ def main() -> None:
     )
 
     # Start Polling
-    logger.info("Bot successfully initialized. Starting long polling...")
+    logger.info("Bot successfully initialized. Starting long polling worker...")
     application.run_polling()
 
 
