@@ -1,9 +1,9 @@
 services:
-  - type: web
+  - type: worker
     name: shorteninglinkbot
     env: python
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn -w 1 -b 0.0.0.0:$PORT bot:app
+    startCommand: python bot.py
     envVars:
       - key: BOT_TOKEN
         sync: false
