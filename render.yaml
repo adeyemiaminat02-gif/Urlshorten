@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: shorteninglinkbot
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn -w 1 -b 0.0.0.0:$PORT bot:app
+    envVars:
+      - key: BOT_TOKEN
+        sync: false
+      - key: ADMIN_ID
+        sync: false
+      - key: DATABASE_NAME
+        value: bot_database.db
+      - key: TIMEZONE
+        value: UTC
